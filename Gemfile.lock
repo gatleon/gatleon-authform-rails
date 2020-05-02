@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    gatleon-authform-rails (0.2.0)
+    gatleon-authform-rails (0.3.0)
 
 GEM
   remote: https://rubygems.org/

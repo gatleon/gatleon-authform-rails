@@ -1,28 +1,53 @@
 require "active_support/concern"
+require "byebug"
 
 RSpec.describe Gatleon::Authform::Rails::User do
   let(:_id) { "2" }
   let(:_email) { "email@example.com" }
 
-  let(:_form_secret_key) { "authform_form_secret_1234" }
-  let(:_authform_base_url) { "https://authform.gatleon.com" }
-
   let(:json) do
+    JSON.generate({
+      "data" => {
+        "_id" => _id,
+        "_email" => _email
+      }
+    })
+  end
+
+  let(:_cookies) do
     {
-      "_id" => _id,
-      "_email" => _email
+      "#{_form_public_key}" => json 
     }
   end
 
+  let(:_form_public_key) { "authform_form_public_1234" }
+  let(:_form_secret_key) { "authform_form_secret_1234" }
+  let(:_domain) { nil }
+  let(:_authform_base_url) { "https://authform.gatleon.com" }
+
   let(:attrs) do
     {
-      json: json,
+      _cookies: _cookies,
+      _form_public_key: _form_public_key,
       _form_secret_key: _form_secret_key,
+      _domain: _domain,
       _authform_base_url: _authform_base_url
     }
   end
 
   let(:user) { Gatleon::Authform::Rails::User.new(attrs) }
+
+  context "initialize with missing cookie" do
+    let(:_cookies) do
+      {}
+    end
+
+    it "raises an error on initialization" do
+      expect do
+        Gatleon::Authform::Rails::User.new(attrs)
+      end.to raise_error(Gatleon::Authform::Rails::Error)
+    end
+  end
 
   describe "#_id" do
     it "returns" do
@@ -33,6 +58,30 @@ RSpec.describe Gatleon::Authform::Rails::User do
   describe "#_email" do
     it "returns" do
       expect(user["_email"]).to eql("email@example.com")
+    end
+  end
+
+  describe "#signoff!" do
+    let(:_cookies) { double("cookies",  delete: true) }
+
+    before do
+      allow(_cookies).to receive(:[]).with(_form_public_key).and_return(json)
+    end
+
+    it "calls delete on cookie" do
+      expect(_cookies).to receive(:delete).with(_form_public_key).once
+
+      user.signoff!
+    end
+
+    context "when domain is set on cookie" do
+      let(:_domain) { :all }
+
+      it "calls delete on cookie with domain set" do
+        expect(_cookies).to receive(:delete).with(_form_public_key, domain: :all).once
+
+        user.signoff!
+      end
     end
   end
 

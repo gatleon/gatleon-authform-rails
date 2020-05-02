@@ -1,30 +1,45 @@
+require "json"
+
 module Gatleon
   module Authform
     module Rails
       class User
         PERMITTED_CHARS = /\A[a-zA-Z0-9_)]*\z/
 
-        def initialize(json:, _form_secret_key:, _authform_base_url:)
-          @json = json
-
+        def initialize(_cookies:,
+                       _form_public_key:,
+                       _form_secret_key:,
+                       _domain:,
+                       _authform_base_url:)
+          @_cookies = _cookies
+          @_form_public_key = _form_public_key
           @_form_secret_key = _form_secret_key
+          @_domain = _domain
           @_authform_base_url = _authform_base_url
+
+          parse!
+        end
+
+        def parse!
+          !!_id
+        rescue
+          raise Gatleon::Authform::Rails::Error
         end
 
         # Getters
         #
         def _id
-          @json["_id"]
+          data["_id"]
         end
 
         def _email
-          @json["_email"]
+          data["_email"]
         end
 
         # Getters
         #
         def [](key)
-          @json[key.to_s]
+          data[key.to_s]
         end
 
         # Setters
@@ -38,8 +53,31 @@ module Gatleon
 
           raise Gatleon::Authform::Rails::Error, "only characters a-z, A-Z, 0-9, and _ permitted in field name" unless key.match?(PERMITTED_CHARS)
 
-          @json[key] = value.to_s
+          data[key] = value.to_s
         end
+
+        def data
+          _json["data"]
+        end
+
+        def _json
+          @_json ||= JSON.parse(@_cookies[@_form_public_key])
+        end
+
+        def signoff!
+          if @_domain
+            @_cookies.delete(@_form_public_key, domain: @_domain)
+          else
+            @_cookies.delete(@_form_public_key)
+          end
+        end
+        alias_method :sign_off!, :signoff!
+        alias_method :signout!, :signoff!
+        alias_method :sign_out!, :signoff!
+        alias_method :logout!, :signoff!
+        alias_method :log_out!, :signoff!
+        alias_method :logoff!, :signoff!
+        alias_method :log_off!, :signoff!
 
         private
 

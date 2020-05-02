@@ -1,3 +1,5 @@
+require "json"
+
 module Gatleon
   module Authform
     module Rails
@@ -20,9 +22,11 @@ module Gatleon
             # defaults to current_user
             define_method current_user_method_name do
               begin
-                json = JSON.parse(cookies[_authform_user_cookie_key])["data"]
-
-                Gatleon::Authform::Rails::User.new(json: json, _form_secret_key: secret_key, _authform_base_url: _authform_base_url)
+                Gatleon::Authform::Rails::User.new(_cookies: cookies,
+                                                   _form_public_key: public_key,
+                                                   _form_secret_key: secret_key,
+                                                   _domain: domain,
+                                                   _authform_base_url: _authform_base_url)
               rescue
                 nil
               end

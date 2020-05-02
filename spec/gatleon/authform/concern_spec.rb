@@ -1,5 +1,4 @@
 require "active_support/concern"
-require "json"
 require "rails"
 require "action_controller"
 require "byebug"
