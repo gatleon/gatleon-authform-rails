@@ -1,4 +1,4 @@
-![authform-rails](https://raw.githubusercontent.com/gatleon/gatleon-rails/master/gatleon-authform-rails.png)
+![authform-rails](https://raw.githubusercontent.com/gatleon/gatleon-authform-rails/master/gatleon-authform-rails.png)
 
 # authform-rails by gatleon
 
