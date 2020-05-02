@@ -4,6 +4,7 @@ module Gatleon
       class Concern < Module
         def initialize(public_key:,
                        secret_key:,
+                       domain: nil,
                        current_user_method_name: "current_user",
                        _authform_base_url: "https://authform.gatleon.com")
           super() do
@@ -34,18 +35,7 @@ module Gatleon
                 uri = URI("#{_authform_base_url}/v1/exchangeUserVoucherForUser/#{params[:_authformUserVoucher]}")
                 response = Net::HTTP.get_response(uri)
 
-                if response.code.to_i == 200
-                  # First attempt WITHOUT all - for setting on platforms like heroku that deny setting cookies across all subdomains
-                  cookies[_authform_user_cookie_key] = {
-                    value: response.body
-                  }
-
-                  # Then set all - desired behavior for hosting your own domain
-                  cookies[_authform_user_cookie_key] = {
-                    value: response.body,
-                    domain: :all
-                  }
-                end
+                cookies[_authform_user_cookie_key] = _cookie_attrs(response.body) if response.code.to_i == 200
 
                 q = Rack::Utils.parse_query(URI.parse(request.url).query)
                 q.delete("_authformUserVoucher")
@@ -58,6 +48,13 @@ module Gatleon
 
             define_method :_authform_user_cookie_key do
               public_key # allows for multiple forms per site
+            end
+
+            define_method :_cookie_attrs do |value|
+              {
+                value: value,
+                domain: domain
+              }.compact
             end
           end
         end

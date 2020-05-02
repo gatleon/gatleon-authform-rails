@@ -44,9 +44,40 @@ RSpec.describe Gatleon::Authform::Rails::Concern do
   describe "#_exchange_user_voucher_for_user" do
     it "sets cookie" do
       expect(cookies).to receive(:[]=).with(public_key, { value: body }).once
-      expect(cookies).to receive(:[]=).with(public_key, { value: body, domain: :all }).once
 
       dummy.send(:_exchange_user_voucher_for_user)
+    end
+
+    context "when domain :all is set" do
+      let(:dummy) do
+        class DummyController < ActionController::Base
+          include Gatleon::Authform::Rails::Concern.new(public_key: "authform_form_public_1234", secret_key: "authform_form_secret_1234", domain: :all)
+        end
+
+        DummyController.new
+      end
+
+      it "sets cookie with domain all" do
+        expect(cookies).to receive(:[]=).with(public_key, { value: body, domain: :all }).once
+
+        dummy.send(:_exchange_user_voucher_for_user)
+      end
+    end
+
+    context "when domain set to a list of domains" do
+      let(:dummy) do
+        class DummyController < ActionController::Base
+          include Gatleon::Authform::Rails::Concern.new(public_key: "authform_form_public_1234", secret_key: "authform_form_secret_1234", domain: %w(.example.com .example.org))
+        end
+
+        DummyController.new
+      end
+
+      it "sets cookie with domain all" do
+        expect(cookies).to receive(:[]=).with(public_key, { value: body, domain: [".example.com", ".example.org"] }).once
+
+        dummy.send(:_exchange_user_voucher_for_user)
+      end
     end
   end
 end
