@@ -66,6 +66,7 @@ module Gatleon
 
         def signoff!
           if @_domain
+            @_cookies.delete(@_form_public_key)
             @_cookies.delete(@_form_public_key, domain: @_domain)
           else
             @_cookies.delete(@_form_public_key)
