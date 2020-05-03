@@ -7,12 +7,12 @@ module Gatleon
         PERMITTED_CHARS = /\A[a-zA-Z0-9_)]*\z/
 
         def initialize(_cookies:,
-                       _form_public_key:,
+                       _authform_user_cookie_key:,
                        _form_secret_key:,
                        _domain:,
                        _authform_base_url:)
           @_cookies = _cookies
-          @_form_public_key = _form_public_key
+          @_authform_user_cookie_key = _authform_user_cookie_key
           @_form_secret_key = _form_secret_key
           @_domain = _domain
           @_authform_base_url = _authform_base_url
@@ -61,15 +61,14 @@ module Gatleon
         end
 
         def _json
-          @_json ||= JSON.parse(@_cookies[@_form_public_key])
+          @_json ||= JSON.parse(@_cookies[@_authform_user_cookie_key])
         end
 
         def signoff!
           if @_domain
-            @_cookies.delete(@_form_public_key)
-            @_cookies.delete(@_form_public_key, domain: @_domain)
+            @_cookies.delete(@_authform_user_cookie_key, domain: @_domain)
           else
-            @_cookies.delete(@_form_public_key)
+            @_cookies.delete(@_authform_user_cookie_key)
           end
         end
         alias_method :sign_off!, :signoff!

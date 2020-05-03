@@ -1,4 +1,4 @@
-require "json"
+require "xxhash"
 
 module Gatleon
   module Authform
@@ -23,7 +23,7 @@ module Gatleon
             define_method current_user_method_name do
               begin
                 Gatleon::Authform::Rails::User.new(_cookies: cookies,
-                                                   _form_public_key: public_key,
+                                                   _authform_user_cookie_key: _authform_user_cookie_key,
                                                    _form_secret_key: secret_key,
                                                    _domain: domain,
                                                    _authform_base_url: _authform_base_url)
@@ -51,7 +51,7 @@ module Gatleon
             end
 
             define_method :_authform_user_cookie_key do
-              public_key # allows for multiple forms per site
+             "#{public_key}_#{XXhash.xxh32(domain)}"
             end
 
             define_method :_cookie_attrs do |value|

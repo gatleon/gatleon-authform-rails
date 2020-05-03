@@ -16,11 +16,11 @@ RSpec.describe Gatleon::Authform::Rails::User do
 
   let(:_cookies) do
     {
-      "#{_form_public_key}" => json 
+      "#{_authform_user_cookie_key}" => json 
     }
   end
 
-  let(:_form_public_key) { "authform_form_public_1234" }
+  let(:_authform_user_cookie_key) { "authform_form_public_1234" }
   let(:_form_secret_key) { "authform_form_secret_1234" }
   let(:_domain) { nil }
   let(:_authform_base_url) { "https://authform.gatleon.com" }
@@ -28,7 +28,7 @@ RSpec.describe Gatleon::Authform::Rails::User do
   let(:attrs) do
     {
       _cookies: _cookies,
-      _form_public_key: _form_public_key,
+      _authform_user_cookie_key: _authform_user_cookie_key,
       _form_secret_key: _form_secret_key,
       _domain: _domain,
       _authform_base_url: _authform_base_url
@@ -65,11 +65,11 @@ RSpec.describe Gatleon::Authform::Rails::User do
     let(:_cookies) { double("cookies",  delete: true) }
 
     before do
-      allow(_cookies).to receive(:[]).with(_form_public_key).and_return(json)
+      allow(_cookies).to receive(:[]).with(_authform_user_cookie_key).and_return(json)
     end
 
     it "calls delete on cookie" do
-      expect(_cookies).to receive(:delete).with(_form_public_key).once
+      expect(_cookies).to receive(:delete).with(_authform_user_cookie_key).once
 
       user.signoff!
     end
@@ -78,7 +78,7 @@ RSpec.describe Gatleon::Authform::Rails::User do
       let(:_domain) { :all }
 
       it "calls delete on cookie with domain set" do
-        expect(_cookies).to receive(:delete).with(_form_public_key, domain: :all).once
+        expect(_cookies).to receive(:delete).with(_authform_user_cookie_key, domain: :all).once
 
         user.signoff!
       end

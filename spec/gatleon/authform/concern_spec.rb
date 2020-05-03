@@ -23,7 +23,7 @@ RSpec.describe Gatleon::Authform::Rails::Concern do
       _authformUserVoucher: user_voucher
     }
   end
-   
+
   let(:body) do
     JSON.generate({ data: { _id: "1", _email: "a@example.com" } })
   end
@@ -42,7 +42,7 @@ RSpec.describe Gatleon::Authform::Rails::Concern do
 
   describe "#_exchange_user_voucher_for_user" do
     it "sets cookie" do
-      expect(cookies).to receive(:[]=).with(public_key, { value: body }).once
+      expect(cookies).to receive(:[]=).with("authform_form_public_1234_46947589", { value: body }).once
 
       dummy.send(:_exchange_user_voucher_for_user)
     end
@@ -57,7 +57,7 @@ RSpec.describe Gatleon::Authform::Rails::Concern do
       end
 
       it "sets cookie with domain all" do
-        expect(cookies).to receive(:[]=).with(public_key, { value: body, domain: :all }).once
+        expect(cookies).to receive(:[]=).with("authform_form_public_1234_3815978777", { value: body, domain: :all }).once
 
         dummy.send(:_exchange_user_voucher_for_user)
       end
@@ -73,7 +73,7 @@ RSpec.describe Gatleon::Authform::Rails::Concern do
       end
 
       it "sets cookie with domain all" do
-        expect(cookies).to receive(:[]=).with(public_key, { value: body, domain: [".example.com", ".example.org"] }).once
+        expect(cookies).to receive(:[]=).with("authform_form_public_1234_4159358443", { value: body, domain: [".example.com", ".example.org"] }).once
 
         dummy.send(:_exchange_user_voucher_for_user)
       end
