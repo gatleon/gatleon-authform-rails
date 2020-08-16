@@ -1,6 +1,4 @@
-![authform-rails](https://raw.githubusercontent.com/gatleon/gatleon-authform-rails/master/gatleon-authform-rails.png)
-
-# authform-rails by gatleon
+# gatleon-authform-rails
 
 add authentication to your application - in 1 minute or less.
 
@@ -22,8 +20,8 @@ add a profile controller
 
 ```ruby
 class ProfileController < ActionController::Base
-  AUTHFORM_FORM_SECRET_KEY = "" # Available at https://authform.gatleon.com. coming soon!
-  AUTHFORM_FORM_PUBLIC_KEY = "" # Available at https://authform.gatleon.com. coming soon!
+  AUTHFORM_FORM_SECRET_KEY = "" # Available at https://authform.gatleon.com
+  AUTHFORM_FORM_PUBLIC_KEY = "" # Available at https://authform.gatleon.com
 
   include Gatleon::Authform::Rails::Concern.new(public_key: AUTHFORM_FORM_PUBLIC_KEY, secret_key: AUTHFORM_FORM_SECRET_KEY)
 
@@ -43,7 +41,7 @@ class ProfileController < ActionController::Base
     erb = <<~ERB
       <p style="color: red;"><%= flash[:error] %></p>
       <h1>Sign In</h1>
-      <form action="https://authform.gatleon.com/v1/form/<%= ProfileController::AUTHFORM_FORM_PUBLIC_KEY %>" method="POST">
+      <form action="https://api.authform.io/v1/form/<%= ProfileController::AUTHFORM_FORM_PUBLIC_KEY %>" method="POST">
         <input type="email" name="email">
         <button type="submit">Sign In</button>
       </form>
