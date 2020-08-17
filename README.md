@@ -16,14 +16,28 @@ and then execute:
 $ bundle install
 ```
 
-add a profile controller
+open rails credentials:
+
+```
+$ EDITOR=vim rails credentials:edit
+```
+
+set authform credentials:
+
+```
+authform:
+  public_key: "Available at https://authform.gatleon.com"
+  secret_key: "Available at https://authform.gatleon.com"
+```
+
+add a profile controller:
 
 ```ruby
 class ProfileController < ActionController::Base
   AUTHFORM_FORM_SECRET_KEY = "" # Available at https://authform.gatleon.com
   AUTHFORM_FORM_PUBLIC_KEY = "" # Available at https://authform.gatleon.com
 
-  include Gatleon::Authform::Rails::Concern.new(public_key: AUTHFORM_FORM_PUBLIC_KEY, secret_key: AUTHFORM_FORM_SECRET_KEY)
+  include Gatleon::Authform::Rails::Concern.new(Rails.application.credentials.dig(:authform))
 
   before_action :require_login, only: [:index]
 
@@ -41,7 +55,7 @@ class ProfileController < ActionController::Base
     erb = <<~ERB
       <p style="color: red;"><%= flash[:error] %></p>
       <h1>Sign In</h1>
-      <form action="https://api.authform.io/v1/form/<%= ProfileController::AUTHFORM_FORM_PUBLIC_KEY %>" method="POST">
+      <form action="https://api.authform.io/v1/form/<%= Rails.application.credentials.dig(:authform, :public_key) %>" method="POST">
         <input type="email" name="email">
         <button type="submit">Sign In</button>
       </form>
@@ -62,7 +76,7 @@ class ProfileController < ActionController::Base
 end
 ```
 
-add profile routes to routes.rb
+add profile routes to routes.rb:
 
 ```ruby
 Rails.application.routes.draw do
