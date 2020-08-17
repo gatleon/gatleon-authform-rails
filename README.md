@@ -41,8 +41,8 @@ class ProfileController < ActionController::Base
   def index
     erb = <<~ERB
       <h1>Profile</h1>
-      <p style="color: green;">You are signed in.</p>
-      <p><%= current_user %></p>
+      <p style="color: green;">You are signed in. (<a href="/profile/signoff">sign off</a>)</p>
+      <p><%= current_user._id %> <%= current_user._email %></p>
     ERB
 
     render inline: erb
@@ -60,6 +60,12 @@ class ProfileController < ActionController::Base
     ERB
 
     render inline: erb
+  end
+
+  def signoff
+    current_user.signoff!
+
+    redirect_to(profile_signin_path) and return
   end
 
   private
@@ -80,6 +86,7 @@ add profile routes to routes.rb:
 Rails.application.routes.draw do
   get "/profile", to: "profile#index", as: :profile
   get "/profile/signin", to: "profile#signin", as: :profile_signin
+  get "/profile/signoff", to: "profile#signoff", as: :profile_signoff
 end
 ```
 
