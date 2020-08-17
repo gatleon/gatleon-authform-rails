@@ -8,7 +8,7 @@ module Gatleon
                        secret_key:,
                        domain: nil,
                        current_user_method_name: "current_user",
-                       _authform_base_url: "https://authform.gatleon.com")
+                       _authform_base_url: "https://api.authform.io")
           super() do
             extend ActiveSupport::Concern
 
