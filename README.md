@@ -34,9 +34,6 @@ add a profile controller:
 
 ```ruby
 class ProfileController < ActionController::Base
-  AUTHFORM_FORM_SECRET_KEY = "" # Available at https://authform.gatleon.com
-  AUTHFORM_FORM_PUBLIC_KEY = "" # Available at https://authform.gatleon.com
-
   include Gatleon::Authform::Rails::Concern.new(Rails.application.credentials.dig(:authform))
 
   before_action :require_login, only: [:index]
