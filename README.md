@@ -53,6 +53,7 @@ class ProfileController < ActionController::Base
       <p style="color: red;"><%= flash[:error] %></p>
       <h1>Sign In</h1>
       <form action="https://api.authform.io/v1/form/<%= Rails.application.credentials.dig(:authform, :public_key) %>" method="POST">
+        <input type="hidden" name="successPath" value="/profile">
         <input type="email" name="email">
         <button type="submit">Sign In</button>
       </form>
@@ -77,8 +78,8 @@ add profile routes to routes.rb:
 
 ```ruby
 Rails.application.routes.draw do
-  get '/profile', to: 'profile#index', as: 'profile'
-  get '/profile/signin', to: 'profile#signin', as: 'profile_signin'
+  get "/profile", to: "profile#index", as: :profile
+  get "/profile/signin", to: "profile#signin", as: :profile_signin
 end
 ```
 
