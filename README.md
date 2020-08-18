@@ -52,7 +52,7 @@ class ProfileController < ActionController::Base
     erb = <<~ERB
       <p style="color: red;"><%= flash[:error] %></p>
       <h1>Sign In</h1>
-      <form action="https://api.authform.io/v1/form/<%= Rails.application.credentials.dig(:authform, :public_key) %>" method="POST">
+      <form action="https://authformapi.gatleon.com/v1/form/<%= Rails.application.credentials.dig(:authform, :public_key) %>" method="POST">
         <input type="hidden" name="successPath" value="/profile">
         <input type="email" name="email">
         <button type="submit">Sign In</button>
