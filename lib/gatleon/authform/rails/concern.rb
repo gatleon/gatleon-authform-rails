@@ -8,16 +8,24 @@ module Gatleon
                        secret_key:,
                        domain: nil,
                        current_user_method_name: "current_user",
+                       signon_url_method_name: "signon_url",
                        _authform_base_url: "https://authformapi.gatleon.com")
           super() do
             extend ActiveSupport::Concern
 
             included do
               helper_method "#{current_user_method_name}".to_sym
+              helper_method "#{signon_url_method_name}".to_sym
+
               before_action :_exchange_user_voucher_for_user
             end
 
             private
+
+            # defaults to signon_url
+            define_method signon_url_method_name do
+              "#{_authform_base_url}/v1/form/#{public_key}"
+            end
 
             # defaults to current_user
             define_method current_user_method_name do
